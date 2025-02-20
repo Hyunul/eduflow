@@ -9,6 +9,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+import logging
+
+logger = logging.getLogger('django')
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -117,11 +121,23 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# LOGGING = {
-#     'loggers' : {
-#         'django.db.backends': {
-#             'level' : 'DEBUG',
-#             'handlers' : ['query_handler'],
-#         }
-#     }
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'logstash': {
+            'level': 'INFO',
+            'class': 'logstash.TCPLogstashHandler',
+            'host': 'localhost',
+            'port': 5044,
+            'version': 1,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['logstash'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}

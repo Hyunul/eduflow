@@ -1,10 +1,10 @@
 # 📚 **EduFlow 프로젝트**
 
-EduFlow는 Django 프레임워크와 Django REST Framework(DRF)를 기반으로 한 **온라인 교육 플랫폼**입니다. 이 프로젝트는 강좌, 레슨, 과제 및 제출물 관리 기능을 제공합니다. 강사, 관리자 및 학생 간의 효율적인 학습 환경을 제공합니다.
+EduFlow는 Django 프레임워크와 Django REST Framework(DRF)를 기반으로 한 **온라인 교육 플랫폼**입니다. 강좌, 레슨, 과제 및 제출물 관리 기능과 함께 **ELK 스택**을 통한 실시간 로그 모니터링 기능을 제공합니다.
 
 ---
 
-## 🚀 **프로젝트 기능**
+## 🚀 **프로젝트 주요 기능**
 
 ### 🎓 **강좌 관리 (Courses)**
 
@@ -17,16 +17,22 @@ EduFlow는 Django 프레임워크와 Django REST Framework(DRF)를 기반으로 
 -   강좌별 레슨 생성 및 조회
 -   레슨 업데이트 및 삭제
 
-### 🏃 **과제 관리 (Assignments)**
+### 🏃 **과제 및 제출물 관리 (Assignments & Submissions)**
 
--   강좌별 과제 생성 및 조회
--   제출물 관리 및 제출 기능
+-   강좌별 과제 생성, 조회 및 제출
+-   제출물 관리 기능
 
 ### 👤 **사용자 관리 (Users)**
 
 -   사용자 등록 및 인증 (JWT 기반)
 -   사용자 프로필 조회 및 수정
 -   비밀번호 변경 및 계정 삭제
+
+### 📊 **ELK 스택을 통한 로그 분석**
+
+-   **Elasticsearch**: 실시간 데이터 검색 및 분석
+-   **Logstash**: 데이터 수집 및 Elasticsearch로 전달
+-   **Kibana**: 시각화 대시보드를 통한 로그 모니터링
 
 ---
 
@@ -35,7 +41,8 @@ EduFlow는 Django 프레임워크와 Django REST Framework(DRF)를 기반으로 
 -   **Backend**: Django, Django REST Framework
 -   **Database**: MySQL
 -   **Authentication**: JWT (JSON Web Tokens)
--   **Dependencies**: Pillow, MySQLclient
+-   **Logging & Monitoring**: ELK Stack (Elasticsearch, Logstash, Kibana)
+-   **Dependencies**: Pillow, MySQLclient, python-logstash
 
 ---
 
@@ -51,25 +58,18 @@ cd eduflow
 ### 📦 **2. 가상환경 생성 및 활성화**
 
 ```bash
-# 가상환경 생성
 python -m venv venv
-
-# Windows
-venv\\Scripts\\activate
-
-# macOS/Linux
-source venv/bin/activate
+source venv/bin/activate  # Windows: venv\\Scripts\\activate
 ```
 
 ### 🔧 **3. 필수 패키지 설치**
 
 ```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
 ### 🏗 **4. 데이터베이스 설정 (MySQL)**
-
-`settings.py`의 데이터베이스 설정을 자신의 환경에 맞게 변경합니다:
 
 ```python
 DATABASES = {
@@ -101,69 +101,140 @@ python manage.py runserver
 
 ---
 
-## 🔑 **API 엔드포인트 요약**
+## 📊 **ELK 스택 설정 및 실행**
 
-### 👤 **Users API**
+### 🐳 **1. Docker 및 Docker Compose 설치**
 
-| 엔드포인트                       | 메서드 | 설명               |
-| -------------------------------- | ------ | ------------------ |
-| `/api/v1/users/register/`        | POST   | 사용자 등록        |
-| `/api/v1/users/login/`           | POST   | 사용자 로그인      |
-| `/api/v1/users/profile/`         | GET    | 사용자 프로필 조회 |
-| `/api/v1/users/change-password/` | POST   | 비밀번호 변경      |
-| `/api/v1/users/delete/`          | DELETE | 사용자 계정 삭제   |
+```bash
+# Ubuntu
+sudo apt update && sudo apt install -y docker.io docker-compose
 
-### 🎓 **Courses API**
+# macOS (Homebrew 사용)
+brew install --cask docker
+```
 
-| 엔드포인트                      | 메서드 | 설명           |
-| ------------------------------- | ------ | -------------- |
-| `/api/v1/courses/`              | GET    | 모든 강좌 조회 |
-| `/api/v1/courses/`              | POST   | 강좌 생성      |
-| `/api/v1/courses/{id}/`         | GET    | 특정 강좌 조회 |
-| `/api/v1/courses/{id}/publish/` | POST   | 강좌 공개      |
-| `/api/v1/courses/{id}/enroll/`  | POST   | 강좌 수강 등록 |
+### 🛠 **2. ELK 스택 Docker Compose 설정 (`docker-compose.yml`)**
 
-### 📖 **Lessons API**
+```yaml
+version: "3.7"
+services:
+    elasticsearch:
+        image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+        container_name: elasticsearch
+        environment:
+            - discovery.type=single-node
+            - xpack.security.enabled=false
+        ports:
+            - "9200:9200"
 
-| 엔드포인트                                         | 메서드 | 설명                  |
-| -------------------------------------------------- | ------ | --------------------- |
-| `/api/v1/courses/{course_id}/lessons/`             | GET    | 강좌별 레슨 목록 조회 |
-| `/api/v1/courses/{course_id}/lessons/`             | POST   | 강좌별 레슨 생성      |
-| `/api/v1/courses/{course_id}/lessons/{lesson_id}/` | GET    | 특정 레슨 상세 조회   |
+    logstash:
+        image: docker.elastic.co/logstash/logstash:8.12.0
+        container_name: logstash
+        ports:
+            - "5044:5044"
+        volumes:
+            - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
 
-### 🏃 **Assignments & Submissions API**
+    kibana:
+        image: docker.elastic.co/kibana/kibana:8.12.0
+        container_name: kibana
+        environment:
+            ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+        ports:
+            - "5601:5601"
+        depends_on:
+            - elasticsearch
+```
 
-| 엔드포인트                                                             | 메서드 | 설명           |
-| ---------------------------------------------------------------------- | ------ | -------------- |
-| `/api/v1/courses/{course_id}/assignments/`                             | GET    | 과제 목록 조회 |
-| `/api/v1/courses/{course_id}/assignments/`                             | POST   | 과제 생성      |
-| `/api/v1/courses/{course_id}/assignments/{assignment_id}/submissions/` | POST   | 과제 제출      |
+### ⚡ **3. ELK 스택 실행**
+
+```bash
+docker-compose up -d
+```
+
+### 📝 **4. Logstash 설정 (`logstash.conf`)**
+
+```plaintext
+input {
+  tcp {
+    port => 5044
+    codec => json
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["http://elasticsearch:9200"]
+    index => "eduflow-logs-%{+YYYY.MM.dd}"
+  }
+  stdout { codec => rubydebug }
+}
+```
+
+### 🌐 **5. Kibana 접속 확인**
+
+웹 브라우저에서 다음 URL에 접속:
+
+```
+http://localhost:5601
+```
+
+✅ **Kibana 접속 문제 해결**:
+
+-   `docker ps -a`로 컨테이너 상태 확인
+-   포트 점유 여부 확인: `lsof -i :5601`
+-   Kibana 로그 확인: `docker logs kibana`
+-   Elasticsearch 연결 여부 확인: `curl localhost:9200`
 
 ---
 
-## 🧪 **테스트 실행**
+### 💡 **6. Django에서 Logstash 연동 설정**
 
-```bash
-python manage.py test
+```python
+import logging
+from logstash import TCPLogstashHandler
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'logstash': {
+            'level': 'INFO',
+            'class': 'logstash.TCPLogstashHandler',
+            'host': 'localhost',
+            'port': 5044,
+            'version': 1,
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['logstash'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+}
 ```
 
 ---
 
-## 💡 **기타 정보**
+## 📄 **에러 코드 및 응답 형식**
 
--   Django Admin: `/admin/`
--   JWT 인증 사용 (`Authorization: Bearer <token>` 헤더 필요)
--   파일 업로드 경로: `/media/`
--   MySQL 사용 시 `slug` 필드의 `max_length`는 255 이하로 설정
+| HTTP 상태 코드   | 설명                  | 응답 예시                                |
+| ---------------- | --------------------- | ---------------------------------------- |
+| 200 OK           | 요청 성공             | `{ "status": "success" }`                |
+| 201 Created      | 리소스 생성 성공      | `{ "status": "created" }`                |
+| 400 Bad Request  | 잘못된 요청           | `{ "error": "Invalid input" }`           |
+| 401 Unauthorized | 인증 실패             | `{ "error": "Authentication required" }` |
+| 403 Forbidden    | 권한 부족             | `{ "error": "Permission denied" }`       |
+| 404 Not Found    | 리소스를 찾을 수 없음 | `{ "error": "Not found" }`               |
 
 ---
 
 ## ✨ **기여 방법**
 
 1. Fork 저장소
-2. 새로운 브랜치 생성: `git checkout -b feature/내기능`
-3. 변경 사항 커밋: `git commit -m 'Add 내 기능'`
-4. 브랜치 푸시: `git push origin feature/내기능`
+2. 새로운 브랜치 생성: `git checkout -b feature/elk-integration`
+3. 변경 사항 커밋: `git commit -m 'Add ELK stack integration'`
+4. 브랜치 푸시: `git push origin feature/elk-integration`
 5. Pull Request 생성
-
----

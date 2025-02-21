@@ -218,6 +218,12 @@ LOGGING = {
 
 ---
 
+## 🎨 Docker 실행 후 Redis 사용 방법
+
+```bash
+docker exec -i -t eduflow-redis-a redis-cli
+```
+
 ## 📄 **에러 코드 및 응답 형식**
 
 | HTTP 상태 코드   | 설명                  | 응답 예시                                |

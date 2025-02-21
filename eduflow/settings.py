@@ -32,6 +32,20 @@ INSTALLED_APPS = [
     # 'analytics',
 ]
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
+
+CACHE = {
+    "default" : {
+        "BACKEND" : "django_redis.cache.RedisCache",
+        "LOCATION" : "redis://127.0.0.1:6379/1",
+        "OPTION" : {
+            "CLIENT_CLASS" : "django_redis.client.DefaultClient",
+        }
+    }
+
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
@@ -121,23 +135,35 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+import os
+
+LOG_DIR = os.path.join(BASE_DIR, 'logs')
+if not os.path.exists(LOG_DIR):
+    os.makedirs(LOG_DIR)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
     'handlers': {
-        'logstash': {
+        'file': {
             'level': 'INFO',
-            'class': 'logstash.TCPLogstashHandler',
-            'host': 'localhost',
-            'port': 5044,
-            'version': 1,
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'user_events.log'),
+            'formatter': 'verbose',
+            'encoding' : 'utf-8',
         },
     },
     'loggers': {
-        'django': {
-            'handlers': ['logstash'],
+        'user_activity_logger': {
+            'handlers': ['file'],
             'level': 'INFO',
-            'propagate': True,
+            'propagate': False,
         },
     },
 }

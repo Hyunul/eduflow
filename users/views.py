@@ -3,13 +3,24 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
+
+from common.logger import log_event
+from users.signals import get_client_ip
 from .models import User
 from .serializers import UserSerializer, CustomTokenObtainPairSerializer
 from common.permissions import IsSelfOrAdmin
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-
+    
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        if response.status_code == 200:
+            log_event(f'✅ JWT 로그인 성공: {request.data.get("username")} | IP: {get_client_ip(request)}')
+        else:
+            log_event(f'❌ JWT 로그인 실패: {request.data.get("username")} | IP: {get_client_ip(request)}', level='warning')
+        return response
+    
 class RegisterView(APIView):
     permission_classes = [~IsAuthenticated]  # 비로그인 상태에서만 접근 가능
     

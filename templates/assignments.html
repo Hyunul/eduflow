@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>과제 목록</title>
+    </head>
+    <body>
+        <h1>과제 목록</h1>
+        <a href="{% url 'create_assignment' course.id %}">과제 생성</a>
+        <table>
+            <thead>
+                <tr>
+                    <th>과제 제목</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for assignment in assignments %}
+                <tr>
+                    <td>{{ assignment.title }}</td>
+                    <td>
+                        <a href="{% url 'edit_assignment' assignment.id %}"
+                            >수정</a
+                        >
+                        <a
+                            href="{% url 'delete_assignment' assignment.id %}"
+                            onclick="return confirm('정말 삭제하시겠습니까?')"
+                            >삭제</a
+                        >
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </body>
+</html>

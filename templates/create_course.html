@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>강좌 생성</title>
+    </head>
+    <body>
+        <h1>강좌 생성</h1>
+        <form method="POST" action="{% url 'create_course' %}">
+            {% csrf_token %}
+            <label for="name">강좌 이름</label>
+            <input type="text" id="name" name="name" required />
+            <br />
+            <label for="description">강좌 설명</label>
+            <textarea id="description" name="description" required></textarea>
+            <br />
+            <button type="submit">강좌 생성</button>
+        </form>
+    </body>
+</html>

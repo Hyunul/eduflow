@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -46,3 +47,11 @@ class EnrollmentView(APIView):
         course = Course.objects.get(pk=course_id)
         Enrollment.objects.create(course=course, student=request.user)
         return Response({'status': 'enrolled'}, status=status.HTTP_201_CREATED)
+    
+def index(request):
+    # 예시 데이터 가져오기 (실제 데이터베이스 연결 필요)
+    courses = Course.objects.all()[:5]  # 최신 5개의 강좌 목록
+
+    return render(request, 'index.html', {
+        'courses': courses,
+    })

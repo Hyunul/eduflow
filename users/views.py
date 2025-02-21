@@ -1,3 +1,4 @@
+from django.shortcuts import render
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
@@ -13,6 +14,9 @@ from common.permissions import IsSelfOrAdmin
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
     
+    def get(self, request, *args, **kwargs):
+        return render(request, 'login.html')
+    
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200:
@@ -23,6 +27,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     
 class RegisterView(APIView):
     permission_classes = [~IsAuthenticated]  # 비로그인 상태에서만 접근 가능
+    
+    def get(self, request, *args, **kwargs):
+        return render(request, 'register.html')
     
     def post(self, request):
         serializer = UserSerializer(data=request.data)

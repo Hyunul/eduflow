@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>LMS 홈</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                font-family: "Roboto", sans-serif;
+                background-color: #f4f7fa;
+                margin: 0;
+                padding: 0;
+            }
+
+            .header {
+                background-color: #4caf50;
+                color: white;
+                padding: 20px;
+                text-align: center;
+            }
+
+            .header h1 {
+                margin: 0;
+            }
+
+            .container {
+                width: 80%;
+                margin: 20px auto;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+
+            .section {
+                width: 48%;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+
+            .section h2 {
+                color: #333;
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+
+            .section p {
+                color: #555;
+                font-size: 16px;
+            }
+
+            .card {
+                background-color: #fafafa;
+                padding: 15px;
+                border-radius: 8px;
+                margin: 10px 0;
+                box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            .card h3 {
+                font-size: 18px;
+                margin: 0 0 10px;
+            }
+
+            .card p {
+                font-size: 14px;
+                color: #777;
+            }
+
+            .btn {
+                display: inline-block;
+                padding: 10px 20px;
+                margin-top: 10px;
+                background-color: #4caf50;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+
+            .btn:hover {
+                background-color: #45a049;
+            }
+
+            .footer {
+                background-color: #4caf50;
+                color: white;
+                text-align: center;
+                padding: 10px;
+                position: fixed;
+                width: 100%;
+                bottom: 0;
+            }
+
+            @media (max-width: 768px) {
+                .section {
+                    width: 100%;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="header">
+            <h1>Learning Management System (LMS)</h1>
+            <p>편리하게 학습을 관리하고 진행하세요.</p>
+        </div>
+
+        <div class="container">
+            <!-- 공지사항 섹션 -->
+            <div class="section">
+                <h2>공지사항</h2>
+                <div class="card">
+                    <h3>2025년 봄학기 수업 시작 안내</h3>
+                    <p>
+                        2025년 봄학기 수업이 3월 1일부터 시작됩니다. 자세한
+                        일정은 학사 일정에서 확인하세요.
+                    </p>
+                    <a href="#" class="btn">자세히 보기</a>
+                </div>
+                <div class="card">
+                    <h3>온라인 강좌 접수 마감</h3>
+                    <p>
+                        온라인 강좌 수강 신청이 마감되었습니다. 추후 공지될 수업
+                        일정에 맞춰 수강을 신청하세요.
+                    </p>
+                    <a href="#" class="btn">자세히 보기</a>
+                </div>
+            </div>
+
+            <!-- 내 강좌 섹션 -->
+            <div class="section">
+                <h2>내 강좌</h2>
+                <div class="card">
+                    <h3>프로그래밍 기초</h3>
+                    <p>
+                        이 강좌는 프로그래밍의 기초를 배우고 실습을 통해 학습할
+                        수 있습니다.
+                    </p>
+                    <a href="#" class="btn">강의 보기</a>
+                </div>
+                <div class="card">
+                    <h3>웹 개발 심화</h3>
+                    <p>
+                        HTML, CSS, JavaScript를 포함한 고급 웹 개발 기술을 익힐
+                        수 있습니다.
+                    </p>
+                    <a href="#" class="btn">강의 보기</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>© 2025 LMS 시스템 - 모든 권리 보유.</p>
+        </div>
+    </body>
+</html>

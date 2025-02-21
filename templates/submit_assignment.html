@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>과제 제출</title>
+    </head>
+    <body>
+        <h1>과제 제출</h1>
+        <form
+            method="POST"
+            action="{% url 'submit_assignment' assignment.id %}"
+            enctype="multipart/form-data"
+        >
+            {% csrf_token %}
+            <label for="file">파일 업로드</label>
+            <input type="file" id="file" name="file" required />
+            <br />
+            <label for="description">제출 내용</label>
+            <textarea id="description" name="description"></textarea>
+            <br />
+            <button type="submit">제출</button>
+        </form>
+    </body>
+</html>
